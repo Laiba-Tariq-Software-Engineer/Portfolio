@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio</title>
+
+    <style>
+        body{
+            background: #eef2f3;
+            margin: 0;
+            font-family: Arial;
+        }
+
+        header{
+            text-align: center;
+            background-color: #6a5acd;
+            color: white;
+            padding: 20px;
+        }
+
+        nav{
+            background-color: #2f3e46;
+            padding: 10px;
+            text-align: center;
+        }
+
+        nav a{
+            color:#ffffff;
+            text-decoration: none;
+            margin: 10px;
+            font-weight: bold;
+        }
+
+        section{
+            background: #ffffff;
+            margin: 15px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+
+        button{
+            background: #6a5acd;
+            color: white;
+            padding: 10px 20px;
+            border:none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover{
+            background: #483d8b;
+        }
+
+        footer{
+            background: #2f3e46;
+            text-align: center;
+            color: white;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Laiba Tariq</h1>
+        <p>Software Engineering Student | Web Developer</p>
+    </header>
+
+    <nav>
+        <a href="#about">ABOUT</a>
+        <a href="#Skills">SKILLS</a>
+        <a href="#contact">CONTACT</a>
+    </nav>
+
+    <section id="about">
+        <h2>ABOUT ME</h2>
+        <ul>
+            <li>BS Software Engineering Student</li>
+            <li>Learning Web Development (HTML, CSS, JavaScript)</li>
+            <li>ABAP (SAP) Beginner</li>
+            <li>SQL & Database Basics</li>
+            <li>C++ OOP Concepts Learner</li>
+            <li>Interested in Software Development & Data Analysis</li>
+        </ul>
+    </section>
+
+    <section id="Skills">
+        <h2>SKILLS</h2>
+        <ul>
+            <li>C++ (OOP, Arrays, Functions)</li>
+            <li>ABAP (Basic Level)</li>
+            <li>SQL Basics</li>
+            <li>Python Basics</li>
+            <li>HTML, CSS, JavaScript</li>
+        </ul>
+    </section>
+
+    <section id="contact">
+        <h2>CONTACT</h2>
+        <p>laiba.tariq483@gmail.com</p>
+
+        <button onclick="showMessage()">Click Me</button>
+    </section>
+
+    <script>
+        function showMessage(){
+            alert("Thank you for visiting Laiba Tariq's Portfolio 🚀");
+        }
+    </script>
+
+    <footer>
+        <p>© 2026 Portfolio</p>
+    </footer>
+
+</body>
+</html>
