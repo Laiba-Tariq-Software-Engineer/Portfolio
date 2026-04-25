@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>La Maison – Fine Dining</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0d0b08;
+      --surface: #16130e;
+      --card: #1e1a13;
+      --gold: #c9a84c;
+      --gold-light: #e8c97a;
+      --cream: #f5ede0;
+      --muted: #8a7d6b;
+      --red: #c0392b;
+      --green: #27ae60;
+      --radius: 12px;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:var(--bg); color:var(--cream); font-family:'Lato',sans-serif; min-height:100vh; }
+
+    nav {
+      position:fixed; top:0; width:100%; z-index:100;
+      background:rgba(13,11,8,0.92); backdrop-filter:blur(12px);
+      border-bottom:1px solid rgba(201,168,76,0.2);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 6vw; height:70px;
+    }
+    .logo { font-family:'Playfair Display',serif; font-size:1.6rem; color:var(--gold); letter-spacing:2px; }
+    .nav-links { display:flex; gap:2rem; list-style:none; }
+    .nav-links a { color:var(--muted); text-decoration:none; font-size:.9rem; letter-spacing:1px; text-transform:uppercase; transition:color .25s; }
+    .nav-links a:hover { color:var(--gold); }
+    .nav-cart {
+      background:var(--gold); color:var(--bg); border:none; border-radius:50px;
+      padding:.5rem 1.2rem; font-weight:700; cursor:pointer; font-size:.85rem;
+      display:flex; align-items:center; gap:.4rem; transition:background .25s;
+    }
+    .nav-cart:hover { background:var(--gold-light); }
+    #cart-count {
+      background:var(--red); color:#fff; border-radius:50%;
+      width:20px; height:20px; display:flex; align-items:center; justify-content:center;
+      font-size:.7rem; font-weight:900;
+    }
+
+    #hero {
+      min-height:100vh; display:flex; flex-direction:column;
+      align-items:center; justify-content:center; text-align:center;
+      padding:0 6vw;
+      background: radial-gradient(ellipse at 50% 60%, rgba(201,168,76,0.08) 0%, transparent 70%),
+                  url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1600&q=80') center/cover no-repeat;
+      position:relative;
+    }
+    #hero::before {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(to bottom, rgba(13,11,8,.7) 0%, rgba(13,11,8,.85) 100%);
+    }
+    #hero > * { position:relative; }
+    .hero-tag { color:var(--gold); letter-spacing:4px; text-transform:uppercase; font-size:.8rem; margin-bottom:1rem; }
+    #hero h1 { font-family:'Playfair Display',serif; font-size:clamp(2.8rem,6vw,5rem); line-height:1.1; margin-bottom:1.2rem; }
+    #hero h1 em { color:var(--gold); font-style:italic; }
+    #hero p { color:var(--muted); max-width:520px; line-height:1.7; margin-bottom:2.2rem; font-size:1.05rem; }
+    .hero-btns { display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; }
+    .btn-gold {
+      background:var(--gold); color:var(--bg); padding:.75rem 2rem;
+      border:none; border-radius:50px; font-weight:700; font-size:.95rem;
+      cursor:pointer; transition:background .25s, transform .2s;
+    }
+    .btn-gold:hover { background:var(--gold-light); transform:translateY(-2px); }
+    .btn-outline {
+      background:transparent; color:var(--gold); padding:.75rem 2rem;
+      border:1.5px solid var(--gold); border-radius:50px; font-weight:700; font-size:.95rem;
+      cursor:pointer; transition:all .25s;
+    }
+    .btn-outline:hover { background:rgba(201,168,76,0.1); }
+
+    section { padding:6rem 6vw; }
+    .section-tag { color:var(--gold); letter-spacing:4px; text-transform:uppercase; font-size:.75rem; margin-bottom:.6rem; }
+    .section-title { font-family:'Playfair Display',serif; font-size:clamp(1.8rem,4vw,2.8rem); margin-bottom:.5rem; }
+    .section-sub { color:var(--muted); margin-bottom:3rem; max-width:560px; line-height:1.7; }
+    .divider { width:60px; height:2px; background:var(--gold); margin:1.2rem 0 2rem; }
+
+    .filter-bar { display:flex; gap:.6rem; flex-wrap:wrap; margin-bottom:2.5rem; }
+    .filter-btn {
+      background:var(--card); color:var(--muted); border:1px solid rgba(201,168,76,0.15);
+      padding:.45rem 1.1rem; border-radius:50px; cursor:pointer; font-size:.85rem;
+      transition:all .2s; font-family:'Lato',sans-serif;
+    }
+    .filter-btn.active, .filter-btn:hover { background:var(--gold); color:var(--bg); border-color:var(--gold); font-weight:700; }
+
+    .menu-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1.5rem; }
+    .menu-card {
+      background:var(--card); border-radius:var(--radius);
+      border:1px solid rgba(201,168,76,0.1);
+      overflow:hidden; transition:transform .3s, box-shadow .3s;
+      position:relative;
+    }
+    .menu-card:hover { transform:translateY(-6px); box-shadow:0 16px 40px rgba(0,0,0,.5); }
+    .menu-card img { width:100%; height:190px; object-fit:cover; display:block; }
+    .badge {
+      position:absolute; top:12px; left:12px;
+      background:var(--gold); color:var(--bg);
+      padding:.2rem .7rem; border-radius:50px; font-size:.7rem; font-weight:700;
+    }
+    .badge.spicy { background:#c0392b; color:#fff; }
+    .badge.veg { background:var(--green); color:#fff; }
+    .badge.new { background:#8e44ad; color:#fff; }
+    .badge.popular { background:#e67e22; color:#fff; }
+    .card-body { padding:1.2rem; }
+    .card-body h3 { font-family:'Playfair Display',serif; font-size:1.1rem; margin-bottom:.3rem; }
+    .card-body p { color:var(--muted); font-size:.83rem; line-height:1.6; margin-bottom:.9rem; }
+    .card-footer { display:flex; align-items:center; justify-content:space-between; }
+    .price { color:var(--gold); font-weight:700; font-size:1.1rem; }
+    .add-btn {
+      background:var(--gold); color:var(--bg); border:none;
+      width:34px; height:34px; border-radius:50%; font-size:1.3rem;
+      cursor:pointer; display:flex; align-items:center; justify-content:center;
+      transition:background .2s, transform .2s;
+    }
+    .add-btn:hover { background:var(--gold-light); transform:scale(1.1); }
+
+    #specials {
+      background:linear-gradient(135deg, #1e1a13 0%, #2a2218 100%);
+      border-top:1px solid rgba(201,168,76,0.15);
+      border-bottom:1px solid rgba(201,168,76,0.15);
+    }
+    .specials-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:1.2rem; }
+    .special-card {
+      background:rgba(201,168,76,0.05); border:1px solid rgba(201,168,76,0.2);
+      border-radius:var(--radius); padding:1.4rem; text-align:center;
+    }
+    .special-icon { font-size:2.2rem; margin-bottom:.7rem; }
+    .special-card h4 { font-family:'Playfair Display',serif; font-size:1rem; margin-bottom:.4rem; color:var(--gold); }
+    .special-card p { color:var(--muted); font-size:.82rem; line-height:1.6; }
+
+    #reservation { background:var(--surface); }
+    .res-grid { display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:start; }
+    .res-info p { color:var(--muted); line-height:1.8; margin-bottom:1.5rem; }
+    .info-row { display:flex; gap:.8rem; align-items:flex-start; margin-bottom:1rem; }
+    .info-icon { font-size:1.3rem; }
+    .info-text strong { display:block; color:var(--cream); margin-bottom:.1rem; font-size:.9rem; }
+    .info-text span { color:var(--muted); font-size:.82rem; }
+    .res-form { display:flex; flex-direction:column; gap:1rem; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    .form-group { display:flex; flex-direction:column; gap:.4rem; }
+    .form-group label { font-size:.8rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+    .form-group input, .form-group select, .form-group textarea {
+      background:var(--card); border:1px solid rgba(201,168,76,0.2);
+      color:var(--cream); border-radius:8px; padding:.7rem 1rem;
+      font-family:'Lato',sans-serif; font-size:.9rem; outline:none;
+      transition:border-color .2s;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--gold); }
+    .form-group select option { background:var(--card); }
+    .form-group textarea { resize:vertical; min-height:90px; }
+    .btn-reserve {
+      background:var(--gold); color:var(--bg); border:none; border-radius:50px;
+      padding:.85rem 2rem; font-weight:700; font-size:1rem;
+      cursor:pointer; transition:background .25s; font-family:'Lato',sans-serif;
+    }
+    .btn-reserve:hover { background:var(--gold-light); }
+
+    .modal-overlay {
+      display:none; position:fixed; inset:0; background:rgba(0,0,0,.75);
+      z-index:200; align-items:center; justify-content:center;
+    }
+    .modal-overlay.open { display:flex; }
+    .modal {
+      background:var(--card); border-radius:16px; width:min(500px,95vw);
+      max-height:80vh; overflow-y:auto; border:1px solid rgba(201,168,76,0.2);
+    }
+    .modal-header {
+      padding:1.4rem 1.6rem; border-bottom:1px solid rgba(201,168,76,0.1);
+      display:flex; align-items:center; justify-content:space-between;
+      position:sticky; top:0; background:var(--card);
+    }
+    .modal-header h2 { font-family:'Playfair Display',serif; font-size:1.3rem; }
+    .close-btn { background:none; border:none; color:var(--muted); font-size:1.5rem; cursor:pointer; }
+    .close-btn:hover { color:var(--cream); }
+    .cart-items { padding:1.2rem 1.6rem; min-height:80px; }
+    .cart-item {
+      display:flex; align-items:center; gap:1rem;
+      padding:.7rem 0; border-bottom:1px solid rgba(201,168,76,0.07);
+    }
+    .cart-item-img { width:54px; height:54px; border-radius:8px; object-fit:cover; }
+    .cart-item-info { flex:1; }
+    .cart-item-info strong { display:block; font-size:.9rem; margin-bottom:.1rem; }
+    .cart-item-info span { color:var(--gold); font-size:.85rem; font-weight:700; }
+    .qty-controls { display:flex; align-items:center; gap:.5rem; }
+    .qty-btn {
+      background:rgba(201,168,76,0.15); color:var(--gold); border:none;
+      width:26px; height:26px; border-radius:50%; cursor:pointer; font-size:1rem;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .qty-btn:hover { background:var(--gold); color:var(--bg); }
+    .qty-num { font-weight:700; min-width:18px; text-align:center; }
+    .remove-btn { background:none; border:none; color:var(--red); cursor:pointer; font-size:1.1rem; }
+    .cart-footer { padding:1.2rem 1.6rem; border-top:1px solid rgba(201,168,76,0.1); }
+    .cart-total { display:flex; justify-content:space-between; margin-bottom:1rem; font-size:1.05rem; }
+    .cart-total span:last-child { color:var(--gold); font-weight:700; font-size:1.2rem; }
+    .empty-cart { text-align:center; color:var(--muted); padding:2rem 0; }
+
+    footer {
+      background:var(--surface); border-top:1px solid rgba(201,168,76,0.15);
+      padding:3rem 6vw; text-align:center;
+    }
+    footer .logo { display:block; margin-bottom:.5rem; }
+    footer p { color:var(--muted); font-size:.85rem; margin-top:.5rem; }
+
+    #toast {
+      position:fixed; bottom:2rem; right:2rem; background:var(--green);
+      color:#fff; padding:.75rem 1.4rem; border-radius:50px;
+      font-size:.9rem; font-weight:700; opacity:0; transform:translateY(10px);
+      transition:all .3s; pointer-events:none; z-index:300;
+    }
+    #toast.show { opacity:1; transform:translateY(0); }
+
+    @media(max-width:768px) {
+      .res-grid { grid-template-columns:1fr; }
+      .form-row { grid-template-columns:1fr; }
+      nav { padding:0 4vw; }
+      .nav-links { display:none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">La Maison</div>
+  <ul class="nav-links">
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#specials">Specials</a></li>
+    <li><a href="#reservation">Reserve</a></li>
+  </ul>
+  <button class="nav-cart" onclick="openCart()">
+    🛒 Cart <span id="cart-count">0</span>
+  </button>
+</nav>
+
+<section id="hero">
+  <div class="hero-tag">✦ Est. 2008 · Fine Dining</div>
+  <h1>Where Every Bite<br/>Tells a <em>Story</em></h1>
+  <p>Handcrafted dishes from the world's finest ingredients, served in an atmosphere of warmth and elegance.</p>
+  <div class="hero-btns">
+    <button class="btn-gold" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">Explore Menu</button>
+    <button class="btn-outline" onclick="document.getElementById('reservation').scrollIntoView({behavior:'smooth'})">Book a Table</button>
+  </div>
+</section>
+
+<section id="menu">
+  <div class="section-tag">✦ Our Menu</div>
+  <h2 class="section-title">Crafted with Passion</h2>
+  <div class="divider"></div>
+  <p class="section-sub">From hearty starters to indulgent desserts — every dish is made fresh daily.</p>
+  <div class="filter-bar" id="filterBar">
+    <button class="filter-btn active" onclick="filterMenu('all',this)">All</button>
+    <button class="filter-btn" onclick="filterMenu('starter',this)">🥗 Starters</button>
+    <button class="filter-btn" onclick="filterMenu('soup',this)">🍲 Soups</button>
+    <button class="filter-btn" onclick="filterMenu('pizza',this)">🍕 Pizza</button>
+    <button class="filter-btn" onclick="filterMenu('pasta',this)">🍝 Pasta</button>
+    <button class="filter-btn" onclick="filterMenu('burger',this)">🍔 Burgers</button>
+    <button class="filter-btn" onclick="filterMenu('grill',this)">🥩 Grills</button>
+    <button class="filter-btn" onclick="filterMenu('seafood',this)">🦞 Seafood</button>
+    <button class="filter-btn" onclick="filterMenu('asian',this)">🍜 Asian</button>
+    <button class="filter-btn" onclick="filterMenu('dessert',this)">🍰 Desserts</button>
+    <button class="filter-btn" onclick="filterMenu('drinks',this)">🥤 Drinks</button>
+  </div>
+  <div class="menu-grid" id="menuGrid"></div>
+</section>
+
+<section id="specials">
+  <div class="section-tag">✦ Why Choose Us</div>
+  <h2 class="section-title">Today's Highlights</h2>
+  <div class="divider"></div>
+  <div class="specials-grid">
+    <div class="special-card"><div class="special-icon">👨‍🍳</div><h4>Chef's Special</h4><p>A seasonal creation from our executive chef — changes every week with the freshest local produce.</p></div>
+    <div class="special-card"><div class="special-icon">🌿</div><h4>Farm to Table</h4><p>Every vegetable and herb is sourced within 50 km. Taste the difference freshness makes.</p></div>
+    <div class="special-card"><div class="special-icon">🎉</div><h4>Happy Hour</h4><p>Mon–Fri, 4–7 PM: 30% off all cocktails and tapas. Perfect for after-work unwinding.</p></div>
+    <div class="special-card"><div class="special-icon">🚚</div><h4>Free Delivery</h4><p>Order above PKR 2,000 and enjoy free delivery anywhere within 10 km of our restaurant.</p></div>
+  </div>
+</section>
+
+<section id="reservation">
+  <div class="section-tag">✦ Reserve a Table</div>
+  <h2 class="section-title">Make a Reservation</h2>
+  <div class="divider"></div>
+  <div class="res-grid">
+    <div class="res-info">
+      <p>Join us for an unforgettable dining experience. Book your table in advance to guarantee the perfect spot.</p>
+      <div class="info-row"><div class="info-icon">📍</div><div class="info-text"><strong>Address</strong><span>12 Culinary Lane, F-7 Markaz, Islamabad</span></div></div>
+      <div class="info-row"><div class="info-icon">📞</div><div class="info-text"><strong>Phone</strong><span>+92 51 1234 5678</span></div></div>
+      <div class="info-row"><div class="info-icon">🕐</div><div class="info-text"><strong>Opening Hours</strong><span>Mon–Sun: 12:00 PM – 11:30 PM</span></div></div>
+      <div class="info-row"><div class="info-icon">✉️</div><div class="info-text"><strong>Email</strong><span>reservations@lamaison.pk</span></div></div>
+    </div>
+    <div>
+      <div class="res-form">
+        <div class="form-row">
+          <div class="form-group"><label>Full Name</label><input type="text" placeholder="Ahmed Khan"/></div>
+          <div class="form-group"><label>Phone</label><input type="tel" placeholder="+92 300 0000000"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Date</label><input type="date"/></div>
+          <div class="form-group"><label>Time</label><input type="time"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Guests</label>
+            <select><option>1 Person</option><option>2 People</option><option>3–4 People</option><option>5–6 People</option><option>7+ People</option></select>
+          </div>
+          <div class="form-group"><label>Occasion</label>
+            <select><option>Casual Dining</option><option>Birthday</option><option>Anniversary</option><option>Business Lunch</option><option>Date Night</option></select>
+          </div>
+        </div>
+        <div class="form-group"><label>Special Requests</label><textarea placeholder="Allergies, seating preferences, or anything else…"></textarea></div>
+        <button class="btn-reserve" onclick="showToast('Reservation request sent! We will confirm shortly.')">Confirm Reservation</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="logo">La Maison</span>
+  <p>© 2024 La Maison Fine Dining · Islamabad, Pakistan</p>
+  <p style="margin-top:.4rem;">🍽️ Taste the art. Live the experience.</p>
+</footer>
+
+<div class="modal-overlay" id="cartModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>🛒 Your Order</h2>
+      <button class="close-btn" onclick="closeCart()">✕</button>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <div class="empty-cart">Your cart is empty.<br/>Add something delicious!</div>
+    </div>
+    <div class="cart-footer" id="cartFooter" style="display:none;">
+      <div class="cart-total"><span>Total:</span><span id="cartTotal">PKR 0</span></div>
+      <button class="btn-reserve" style="width:100%;" onclick="showToast('Order placed! Estimated time: 30–45 min 🎉'); clearCart();">Place Order</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  const menuItems = [
+    { id:1,  name:'Bruschetta al Pomodoro', desc:'Toasted sourdough with heirloom tomatoes, fresh basil, garlic & EVOO.', price:650,  cat:'starter', badge:'veg',     img:'https://images.unsplash.com/photo-1572695157366-5e585ab2b69f?w=400&q=80' },
+    { id:2,  name:'Crispy Calamari',        desc:'Lightly battered squid rings with lemon aioli and marinara sauce.',      price:850,  cat:'starter', badge:'popular', img:'https://images.unsplash.com/photo-1634467524884-897d0af5e104?w=400&q=80' },
+    { id:3,  name:'Chicken Satay',          desc:'Grilled skewers marinated in lemongrass & served with peanut sauce.',    price:750,  cat:'starter', badge:'spicy',   img:'https://images.unsplash.com/photo-1529563021893-cc83c992d75d?w=400&q=80' },
+    { id:4,  name:'Stuffed Mushrooms',      desc:'Portobello mushrooms filled with cheese, spinach & garlic breadcrumbs.', price:700,  cat:'starter', badge:'veg',     img:'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&q=80' },
+    { id:5,  name:'French Onion Soup',      desc:'Slow-caramelised onions in beef broth, topped with Gruyère crouton.',   price:550,  cat:'soup',    badge:'',        img:'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&q=80' },
+    { id:6,  name:'Tom Yum Goong',          desc:'Thai hot & sour prawn soup with lemongrass, galangal & kaffir lime.',   price:700,  cat:'soup',    badge:'spicy',   img:'https://images.unsplash.com/photo-1555126634-323283e090fa?w=400&q=80' },
+    { id:7,  name:'Cream of Mushroom',      desc:'Velvety wild mushroom velouté with truffle oil and fresh chives.',       price:500,  cat:'soup',    badge:'veg',     img:'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=80' },
+    { id:8,  name:'Margherita Classica',    desc:'San Marzano tomato, fior di latte, fresh basil — perfection.',           price:1100, cat:'pizza',   badge:'veg',     img:'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&q=80' },
+    { id:9,  name:'BBQ Chicken Pizza',      desc:'Smoky BBQ sauce, grilled chicken, red onion, jalapeño & mozzarella.',   price:1350, cat:'pizza',   badge:'popular', img:'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&q=80' },
+    { id:10, name:'Four Cheese Pizza',      desc:'Mozzarella, gorgonzola, parmesan & ricotta on a garlic cream base.',    price:1400, cat:'pizza',   badge:'',        img:'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&q=80' },
+    { id:11, name:'Spicy Diavola',          desc:'Spicy salami, nduja, chilli flakes, roasted peppers & mozzarella.',     price:1300, cat:'pizza',   badge:'spicy',   img:'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400&q=80' },
+    { id:12, name:'Spaghetti Carbonara',    desc:'Egg yolk, guanciale, Pecorino Romano, black pepper — the Roman classic.',price:1200, cat:'pasta',   badge:'popular', img:'https://images.unsplash.com/photo-1612874742237-6526221588e3?w=400&q=80' },
+    { id:13, name:'Penne Arrabbiata',       desc:'Spicy tomato sauce with garlic and fresh parsley — simple yet fiery.',  price:950,  cat:'pasta',   badge:'spicy',   img:'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400&q=80' },
+    { id:14, name:'Truffle Mushroom Tagliatelle', desc:'Fresh egg pasta with wild mushrooms, truffle cream & parmesan.', price:1500, cat:'pasta',   badge:'new',     img:'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=400&q=80' },
+    { id:15, name:'Classic Smash Burger',   desc:'Double smashed patty, American cheese, pickles, onion & special sauce.',price:1100, cat:'burger',  badge:'popular', img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80' },
+    { id:16, name:'BBQ Bacon Burger',       desc:'Beef patty, streaky bacon, BBQ sauce, crispy onion rings & cheddar.',   price:1250, cat:'burger',  badge:'',        img:'https://images.unsplash.com/photo-1550317138-10000687a72b?w=400&q=80' },
+    { id:17, name:'Mushroom Swiss Burger',  desc:'Beef patty, sautéed mushrooms, Swiss cheese, garlic mayo & rocket.',   price:1200, cat:'burger',  badge:'',        img:'https://images.unsplash.com/photo-1561758033-d89a9ad46330?w=400&q=80' },
+    { id:18, name:'Crispy Chicken Burger',  desc:'Buttermilk fried chicken, coleslaw, jalapeño mayo on a brioche bun.',  price:1050, cat:'burger',  badge:'spicy',   img:'https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=400&q=80' },
+    { id:19, name:'Ribeye Steak 300g',      desc:'Prime Black Angus ribeye grilled to your liking with chimichurri.',     price:3500, cat:'grill',   badge:'popular', img:'https://images.unsplash.com/photo-1544025162-d76694265947?w=400&q=80' },
+    { id:20, name:'Lamb Chops',             desc:'Herb-marinated New Zealand lamb chops with rosemary jus & roasted veg.',price:2800, cat:'grill',   badge:'',        img:'https://images.unsplash.com/photo-1600891964092-4316c288032e?w=400&q=80' },
+    { id:21, name:'Mixed Grill Platter',    desc:'Chicken tikka, seekh kebab, shish tawook & grilled prawns.',            price:3200, cat:'grill',   badge:'new',     img:'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&q=80' },
+    { id:22, name:'Pan-Seared Salmon',      desc:'Atlantic salmon fillet with lemon beurre blanc, capers & asparagus.',  price:2400, cat:'seafood', badge:'',        img:'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=400&q=80' },
+    { id:23, name:'Grilled Tiger Prawns',   desc:'Jumbo prawns in garlic butter, white wine & parsley.',                  price:2600, cat:'seafood', badge:'popular', img:'https://images.unsplash.com/photo-1625944525533-473f1a3d54e7?w=400&q=80' },
+    { id:24, name:'Seafood Linguine',       desc:'Clams, mussels, calamari & prawns in white wine tomato sauce.',         price:2200, cat:'seafood', badge:'',        img:'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=400&q=80' },
+    { id:25, name:'Pad Thai',               desc:'Stir-fried rice noodles with prawns, bean sprouts, peanuts & tamarind.',price:1300, cat:'asian',   badge:'popular', img:'https://images.unsplash.com/photo-1559314809-0d155014e29e?w=400&q=80' },
+    { id:26, name:'Chicken Ramen',          desc:'Rich tonkotsu broth, ramen noodles, chashu pork, soft egg & nori.',    price:1400, cat:'asian',   badge:'new',     img:'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&q=80' },
+    { id:27, name:'Butter Chicken',         desc:'Tender chicken in velvety tomato-cream masala. Served with naan.',      price:1100, cat:'asian',   badge:'spicy',   img:'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400&q=80' },
+    { id:28, name:'Vegetable Biryani',      desc:'Fragrant basmati rice layered with spiced vegetables & saffron.',       price:900,  cat:'asian',   badge:'veg',     img:'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400&q=80' },
+    { id:29, name:'Crème Brûlée',           desc:'Classic French custard with a perfectly caramelised sugar crust.',      price:650,  cat:'dessert', badge:'popular', img:'https://images.unsplash.com/photo-1470124182917-cc6e71b22ecc?w=400&q=80' },
+    { id:30, name:'Molten Lava Cake',       desc:'Warm dark chocolate cake with a flowing centre & vanilla ice cream.',   price:700,  cat:'dessert', badge:'',        img:'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400&q=80' },
+    { id:31, name:'Tiramisu',               desc:'Espresso-soaked ladyfingers, mascarpone cream & cocoa.',                price:750,  cat:'dessert', badge:'',        img:'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400&q=80' },
+    { id:32, name:'Gulab Jamun',            desc:'Soft milk-solid dumplings in rose-cardamom syrup. Served warm.',        price:450,  cat:'dessert', badge:'veg',     img:'https://images.unsplash.com/photo-1666559329009-47f35f6a1baf?w=400&q=80' },
+    { id:33, name:'Fresh Mango Lassi',      desc:'Chilled yoghurt blended with ripe Sindhri mangoes & cardamom.',        price:350,  cat:'drinks',  badge:'veg',     img:'https://images.unsplash.com/photo-1527751171053-6ac5ec50000b?w=400&q=80' },
+    { id:34, name:'Virgin Mojito',          desc:'Fresh mint, lime juice, soda water & a splash of grenadine.',           price:400,  cat:'drinks',  badge:'veg',     img:'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=400&q=80' },
+    { id:35, name:'Cold Brew Coffee',       desc:'12-hour steeped cold brew over ice, smooth and naturally sweet.',       price:450,  cat:'drinks',  badge:'',        img:'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=400&q=80' },
+    { id:36, name:'Watermelon Lemonade',    desc:'Fresh watermelon blended with lemon juice and a hint of mint.',         price:380,  cat:'drinks',  badge:'new',     img:'https://images.unsplash.com/photo-1527661591475-527312dd65f5?w=400&q=80' },
+  ];
+
+  function renderMenu(filter) {
+    const grid = document.getElementById('menuGrid');
+    const items = filter === 'all' ? menuItems : menuItems.filter(i => i.cat === filter);
+    grid.innerHTML = items.map(item => `
+      <div class="menu-card">
+        ${item.badge ? `<span class="badge ${item.badge}">${item.badge.toUpperCase()}</span>` : ''}
+        <img src="${item.img}" alt="${item.name}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80'"/>
+        <div class="card-body">
+          <h3>${item.name}</h3>
+          <p>${item.desc}</p>
+          <div class="card-footer">
+            <span class="price">PKR ${item.price.toLocaleString()}</span>
+            <button class="add-btn" onclick="addToCart(${item.id})">+</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function filterMenu(cat, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderMenu(cat);
+  }
+
+  renderMenu('all');
+
+  let cart = [];
+
+  function addToCart(id) {
+    const item = menuItems.find(i => i.id === id);
+    const existing = cart.find(i => i.id === id);
+    if (existing) existing.qty++;
+    else cart.push({ ...item, qty: 1 });
+    updateCartCount();
+    showToast(`${item.name} added! 🎉`);
+  }
+
+  function removeFromCart(id) {
+    cart = cart.filter(i => i.id !== id);
+    updateCartCount();
+    renderCart();
+  }
+
+  function changeQty(id, delta) {
+    const item = cart.find(i => i.id === id);
+    if (!item) return;
+    item.qty += delta;
+    if (item.qty <= 0) removeFromCart(id);
+    else renderCart();
+    updateCartCount();
+  }
+
+  function updateCartCount() {
+    document.getElementById('cart-count').textContent = cart.reduce((s, i) => s + i.qty, 0);
+  }
+
+  function renderCart() {
+    const container = document.getElementById('cartItems');
+    const footer = document.getElementById('cartFooter');
+    if (!cart.length) {
+      container.innerHTML = '<div class="empty-cart">Your cart is empty.<br/>Add something delicious!</div>';
+      footer.style.display = 'none'; return;
+    }
+    container.innerHTML = cart.map(item => `
+      <div class="cart-item">
+        <img class="cart-item-img" src="${item.img}" alt="${item.name}" onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80'"/>
+        <div class="cart-item-info">
+          <strong>${item.name}</strong>
+          <span>PKR ${(item.price * item.qty).toLocaleString()}</span>
+        </div>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="changeQty(${item.id},-1)">−</button>
+          <span class="qty-num">${item.qty}</span>
+          <button class="qty-btn" onclick="changeQty(${item.id},1)">+</button>
+        </div>
+        <button class="remove-btn" onclick="removeFromCart(${item.id})">🗑</button>
+      </div>
+    `).join('');
+    document.getElementById('cartTotal').textContent = 'PKR ' + cart.reduce((s,i) => s + i.price*i.qty, 0).toLocaleString();
+    footer.style.display = 'block';
+  }
+
+  function openCart() { renderCart(); document.getElementById('cartModal').classList.add('open'); }
+  function closeCart() { document.getElementById('cartModal').classList.remove('open'); }
+  function clearCart() { cart = []; updateCartCount(); closeCart(); }
+
+  document.getElementById('cartModal').addEventListener('click', function(e) {
+    if (e.target === this) closeCart();
+  });
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+</script>
+</body>
+</html>
